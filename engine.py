@@ -15,7 +15,11 @@ class Engine:
             self.gear=-1
         elif self.gear>5:
             self.gear=5
-
+    
+    def stop(self):
+        if self.get_speed() <= 0:
+            self.rpm = 0
+            
     def get_speed(self):        
         if self.gear>=0:
             res = (self.rpm*self.gear/5)/10

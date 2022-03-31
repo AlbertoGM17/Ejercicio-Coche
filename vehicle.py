@@ -9,6 +9,7 @@ from environment import *
 from light import *
 from fuel import *
 from redlight import *
+from tkinter.ttk import *
 
 class Vehicle:
     def __init__(self):
@@ -37,7 +38,7 @@ class Vehicle:
         self.light_rear_polygon=self.canvas1.create_polygon(50,144,85,135,86,127,49,129,stipple="gray50", fill="red", state='hidden')        
 
         self.redlight_polygon = [ self.canvas1.create_polygon(452,202,464,202,468,198,456,198,fill="red", state='hidden'), \
-            self.canvas1.create_polygon(458,197,469,197,473,42,463,42,fill="red", state='hidden'), \
+            self.canvas1.create_polygon(458,197,469,197,473,192,463,192,fill="red", state='hidden'), \
             self.canvas1.create_polygon(463,191,472,191,475,188,467,188,fill="red", state='hidden'), \
             self.canvas1.create_polygon(468,187,475,187,478,183,472,183,fill="red", state='hidden'), \
             self.canvas1.create_polygon(472,183,478,183,480,181,474,181,fill="red", state='hidden') ]
@@ -53,31 +54,37 @@ class Vehicle:
 
 
         # añadir label para motor
+
         self.labelframe1=ttk.LabelFrame(self.ventana1, text="Engine:")        
         self.labelframe1.grid(column=0, row=2, padx=5, pady=10)        
-        self.login()
-        # añadir para widget scale luminosidad
-        self.label1=tk.Label(self.ventana1, text="[Enviroment light]")
-        self.label1.grid(column=0, row=3, padx=10, pady=10)
+        self.label1=ttk.Label(self.labelframe1, text=str(self.engine))
+        self.label1.pack()
 
-        self.scale = tk.Scale(self.ventana1, from_=self.environment.set_lum(self.environment.lum), to=99, orient=tk.HORIZONTAL, command=self.update_label)
-        self.scale.grid(column=0, row=4, sticky='we')
+        # añadir para widget scale luminosidad
+
+        self.labelframe2=ttk.LabelFrame(self.ventana1, text="Luminosity")        
+        self.labelframe2.grid(column=0, row=3, padx=5, pady=10)  
+
+        self.scale = tk.Scale(self.labelframe2, from_=0, to=99, orient=tk.HORIZONTAL, command=self.update_label)
+        self.scale.pack()
 
         # añadir barra progreso combustible
         
-        self.ventana1.after(500,self.do_work)
+        self.labelframe3=ttk.LabelFrame(self.ventana1, text="Fuel:")        
+        self.labelframe3.grid(column=0, row=4, padx=5, pady=10)  
+        self.progress = Progressbar(self.labelframe3, orient = HORIZONTAL, 
+			length = 100, mode = 'determinate')
+        self.progress.pack()
         self.ventana1.bind("<KeyPress>", self.action)
 
         self.ventana1.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.ventana1.after(10,self.do_work)
         self.ventana1.mainloop()
         
-    def login(self):
 
-        self.label1=ttk.Label(self.labelframe1, text=str(self.engine))
-        self.label1.grid(column=0, row=0, padx=4, pady=4)
 
     def update_label(self,event):
-        self.label1.configure(text = str(self.scale.get()))
+        #self.label1.configure(text = str(self.scale.get()))
         self.environment.set_lum(self.scale.get())
 
     def on_closing(self):
@@ -187,7 +194,8 @@ class Vehicle:
         self.draw_blinker_rear()
         self.draw_light()
         self.draw_redlight()
-
-
-
+        self.label1.configure(text = str(self.engine))
+        
+        self.progress['value'] = self.fuel.get_porcentage_level()
+        
 vehicle1 = Vehicle()

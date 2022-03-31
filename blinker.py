@@ -45,5 +45,6 @@ class Blinker(threading.Thread):
 
     def run(self):
         while True:
-            # TODO
+            if self.blinking:
+                self.change()
             sleep(0.5)
